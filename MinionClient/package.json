@@ -1,0 +1,22 @@
+{
+  "name": "minionclient",
+  "version": "1.0.0",
+  "description": "Client WebApp for Minion Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AmitEisinger/StorageManagerRobot.git"
+  },
+  "author": "Guy Carmi, Amit Eisinger, Tali Narovlansky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AmitEisinger/StorageManagerRobot/issues"
+  },
+  "homepage": "https://github.com/AmitEisinger/StorageManagerRobot#readme",
+  "dependencies": {
+    "firebase": "^8.2.1"
+  }
+}
