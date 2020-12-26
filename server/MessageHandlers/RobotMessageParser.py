@@ -1,16 +1,21 @@
 from Definitions.Directions import *
 from Definitions.Components import *
+from Definitions.Protocol import *
 
-
+"""
+class fields:
+    msg - the original message as string
+    src - message sender (value of Component enum)
+    type - message type (value of RobotMessages enum)
+    curr_row - the row of current robot's position
+    curr_col - the column of current robot's position
+    curr_face_direction - current robot's face direction
+"""
 class RobotMessageParser():
     def __init__(self, bytes_msg):
         self.msg = Utils.bytes_to_string(bytes_msg)
-        self.src = get_component(self.msg[0])    # value from the Component's enum
-
-        # identify message's type depending on the sender
-        msg_type = int(self.msg[1:3])
-        if isRobot(self.src):
-            self.type = RobotMessages.get_robot_message_type(msg_type)      # value from the RobotMessages's enum
+        self.src = get_component(self.msg[0])
+        self.type = RobotMessages.get_robot_message_type(msg_type)
     
     
     def parse(self):

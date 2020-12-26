@@ -1,13 +1,19 @@
 from Definitions.Components import *
+from Definitions.Protocol import *
 
-
-# TODO: implement the class after defining the client-server protocol
-# (apparently the messages will be sent in JSONs)
-
+"""
+class fields:
+    msg - the original message as dictionary
+    src - message sender (value of Component enum)
+    type - message type (value of ClientMessages enum)
+    items - client's order as list of dictionaries
+"""
 class ClientMessageParser():
-    def __init__(self, msg):
-        # TODO: must contain self.type
-        pass
+    def __init__(self, bytes_msg):
+        self.msg = Utils.bytes_json_to_dict(bytes_msg)
+        self.src = get_component(self.msg[ClientMessageFields.SOURCE])
+        self.type = ClientMessages.get_client_message_type(self.msg[ClientMessageFields.TYPE])
     
     def parse(self):
-        pass
+        if self.type == ClientMessages.ORDER:
+            self.items = self.msg[ClientMessageFields.ITEMS]
