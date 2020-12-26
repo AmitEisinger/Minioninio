@@ -3,24 +3,53 @@ from Definitions.Components import Components
 from Definitions.Directions import Directions
 
 
+S = Components.SERVER.value
+
 class ServerMessageGenerator:
-    S = Components.SERVER.value
-    
-    @staticmethod
-    def ack_msg():
+    def robot_ack_msg():
         return S + Utils.zero_padding(ServerMessages.ACK.value, 2)
     
     # param dir of type Directions
-    @staticmethod
     def move_msg(dir):
         msg_type = Utils.zero_padding(ServerMessages.MOVE.value, 2)
         return S + msg_type + dir.value
     
-    @staticmethod
     def drop_msg():
         return S + Utils.zero_padding(ServerMessages.DROP.value, 2)
     
-    @staticmethod
+    
+    def client_ack_msg():
+        return Utils.dict_to_json(
+            {
+                ClientMessageFields.SOURCE : S,
+                ClientMessageFields.TYPE : ServerMessages.ACK.value
+            }
+        )
+    
     def done_msg():
-        # TODO: implement it when the client-server protocol will be known
-        pass
+        return Utils.dict_to_json(
+            {
+                ClientMessageFields.SOURCE : S,
+                ClientMessageFields.TYPE : ServerMessages.DONE.value
+            }
+        )
+
+    # param items is a list of dictionaries (according to the protocol)
+    def item_not_available_msg(items):
+        return Utils.dict_to_json(
+            {
+                ClientMessageFields.SOURCE : S,
+                ClientMessageFields.TYPE : ServerMessages.ITEM_NOT_AVAILABLE.value,
+                ClientMessageFields.ITEMS : items
+            }
+        )
+
+    # param items is a list of dictionaries (according to the protocol)
+    def stock_msg(items):
+        return Utils.dict_to_json(
+            {
+                ClientMessageFields.SOURCE : S,
+                ClientMessageFields.TYPE : ServerMessages.STOCK.value,
+                ClientMessageFields.ITEMS : items
+            }
+        )

@@ -1,15 +1,21 @@
-# TODO: implelment the functions when we know how to distinguish between robot and client messages.
-# This might be done by the type of the message (robot is string and client is JSON) 
-# or using the Components enum.
+import Utils
+from Definitions.Components import *
+
+
 class SourceIdentifier:
-    @staticmethod
     def get_src_type(msg):
-        pass
+        if SourceIdentifier.is_robot(msg):
+            return Components.ROBOT
+        if SourceIdentifier.is_client(msg):
+            return Components.CLIENT
+        return None     # should never get here
 
-    @staticmethod
     def is_robot(msg):
-        pass
+        msg_string = Utils.bytes_to_string(msg)
+        src = get_component(msg_string[0])
+        return isRobot(src)
 
-    @staticmethod
     def is_client(msg):
-        pass
+        msg_dict = Utils.bytes_json_to_dict(msg)
+        src = get_component(msg_dict[ClientMessageFields.SOURCE])
+        return isClient(src)
