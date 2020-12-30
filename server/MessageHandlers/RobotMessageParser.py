@@ -16,9 +16,6 @@ class RobotMessageParser():
         self.msg = Utils.bytes_to_string(bytes_msg)
         self.src = get_component(self.msg[0])
         self.type = RobotMessages.get_robot_message_type(msg_type)
-    
-    
-    def parse(self):
         if self.type == RobotMessages.CONNECT:
             self.__connect_msg()
             

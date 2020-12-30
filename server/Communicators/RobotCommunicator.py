@@ -23,25 +23,36 @@ class RobotCommunicator:
     def recv_msg(self, msg):
         self.msg = msg
         self.parser = RobotMessageParser(msg)
-        self.parser.parse()
         # send ACK as a reply for any non-ACK message
         if self.parser.type != RobotMessages.ACK:
-            self.send_ack()
-    
-    def send_ack(self):
-        msg = ServerMessageGenerator.robot_ack_msg()
-        self.__send(msg)
+            self.__send_msg(ServerMessages.ACK)
     
     def handle_order(self, steps):
         for step in steps:
-            msg = ServerMessageGenerator.move_msg(step)
-            self.__send(msg)
-            self.sock.recv(self.buffer_size)    # receive the ACK
+            self.__send_msg(ServerMessages.MOVE, step)
+            self.__recv()    # receive the ACK
             FTP_Server(self.parser).start()     # TODO: maybe it would be better to start the FTP connection once earlier - check it
             # TODO: the current robot's location is now updated in self.parse - validate it
-            self.send_ack()
-        msg = ServerMessageGenerator.drop_msg()
-        self.__send(msg)
+            self.__send_msg(ServerMessages.ACK)
+        self.__send_msg(ServerMessages.DROP)
+        self.__recv()        # receive the ACK
     
+
+    def __send_msg(self, msg_type, param=''):
+        msg = None
+        if msg_type == ServerMessages.ACK:
+            msg = ServerMessageGenerator.robot_ack_msg()
+        elif msg_type == ServerMessages.MOVE:
+            msg = ServerMessageGenerator.move_msg(param)
+        elif msg_type == ServerMessages.DROP:
+            msg = ServerMessageGenerator.drop_msg()
+        
+        if msg != None:
+            self.__send(msg)
+
+
     def __send(self, msg):
-        return self.sock.send(msg)
+        self.sock.send(msg)
+    
+    def __recv(self):
+        return self.sock.recv(self.buffer_size)
