@@ -1,26 +1,31 @@
 import socket
-from MessageHandlers.SourceIdentifier import SourceIdentifier
 from Communicators.RobotCommunicator import RobotCommunicator
 from Communicators.ClientCommunicator import ClientCommunicator
+from Servers.Details import *
 
-# TODO: fix these values
-IP = '127.0.0.1'
-PORT = 8080
-BUFFER_SIZE = 4096
 
+"""
+class fields:
+    robot_comm - robot communicator (there is a single robot, so a single communicator too)
+    conn - the socket that robot has been connected with
+"""
 class SocketServer:
-    def serve():
-        robot_communicator = RobotCommunicator(BUFFER_SIZE)
+    def __init__(self):
+        self.robot_comm = RobotCommunicator(BUFFER_SIZE)
+
+    def connect(self):
         with socket.socket() as s:
-            s.bind((IP, PORT))
+            s.bind((IP, SOCKET_PORT))
             s.listen()
-            conn, addr = s.accept()
-            with conn:
-                client_communicator = ClientCommunicator(conn, BUFFER_SIZE, robot_communicator)
+            self.conn, addr = s.accept()
+            self.robot_comm.set_socket(self.conn)
+    
+    def is_connected(self):
+        return hasattr(self, 'conn')
+    
+    def serve(self):
+        if self.is_connected():
+            with self.conn:
                 while True:
-                    msg = conn.recv(BUFFER_SIZE)
-                    if SourceIdentifier.is_robot(msg):
-                        robot_communicator.set_socket(conn)
-                        robot_communicator.recv_msg(msg)
-                    elif SourceIdentifier.is_client(msg):
-                        client_communicator.recv_msg(msg)
+                    msg = self.conn.recv(BUFFER_SIZE)
+                    self.robot_comm.recv_msg(msg)

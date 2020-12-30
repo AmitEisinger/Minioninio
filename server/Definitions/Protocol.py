@@ -28,7 +28,6 @@ class ClientMessages(Enum):
     ORDER = 1
     ACK = 2
     STOCK = 3
-    DISCONNECT = 4
 
     def get_client_message_type(msg_type):
         return Utils.get_enum_of_val(msg_type, ClientMessages)

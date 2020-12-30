@@ -9,11 +9,9 @@ class fields:
     items - client's order as list of dictionaries
 """
 class ClientMessageParser():
-    def __init__(self, bytes_msg):
-        self.msg = Utils.bytes_json_to_dict(bytes_msg)
+    def __init__(self, msg):
+        self.msg = Utils.json_to_dict(msg)
         self.src = get_component(self.msg[ClientMessageFields.SOURCE])
         self.type = ClientMessages.get_client_message_type(self.msg[ClientMessageFields.TYPE])
-    
-    def parse(self):
         if self.type == ClientMessages.ORDER:
             self.items = self.msg[ClientMessageFields.ITEMS]
