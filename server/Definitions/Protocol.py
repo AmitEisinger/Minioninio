@@ -34,7 +34,7 @@ class ClientMessages(Enum):
 
 
 # NOTE: this is not an enum
-class ClientMessageFields():
+class ClientMessageFields:
     SOURCE = 'src'
     TYPE = 'type'
     ITEMS = 'items'

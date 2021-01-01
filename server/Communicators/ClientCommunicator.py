@@ -3,6 +3,7 @@ from Definitions.Protocol import ClientMessages
 import Communicators.RobotCommunicator
 from Definitions.Directions import *
 from MessageHandlers.ServerMessageGenerator import *
+from Firebase.DB_Items import DB_Items
 
 
 """
@@ -11,7 +12,7 @@ VERY IMPORTANT NOTE: call recv_msg function after every message received from th
 class fields:
     websocket - websocket to communicate through
     robot_comm - robot communicator (there is a single robot, so a single communicator too)
-    msg - last received message (in bytes)
+    msg - last received message (as string)
     parser - client parser that parses the current message
 """
 class ClientCommunicator:
@@ -30,18 +31,19 @@ class ClientCommunicator:
     def __handle_msg(self):
         if self.parser.type == ClientMessages.CONNECT:
             self.__send_msg(ServerMessages.ACK)
+        
         elif self.parser.type == ClientMessages.ORDER:
-            # TODO: check in the DB if all the items are available and return a list of not_available_items
-            not_available_items = []
+            not_available_items = DB_Items.get_not_available_items(self.parser.items)
             # some items are not available
             if not_available_items:
                 self.__send_msg(ServerMessages.ITEM_NOT_AVAILABLE, not_available_items)
-                self.__recv()           # receive the ACK
+                self.__recv()       # receive the ACK
             # all items are available
             else:
                 self.__send_msg(ServerMessages.ACK)
             
             # any way, we proceed the available items
+            available_items = DB_Items.get_available_items(self.parser.items)
             # TODO: calculate the route for the robot and send it as a list of lists of Directions 
             # (inner list for every item in the order).
             # put it in items_steps
@@ -50,9 +52,9 @@ class ClientCommunicator:
                 self.robot_comm.handle_order(steps)
             # send DONE when the order is ready
             self.__send_msg(ServerMessages.DONE)
+        
         elif self.parser.type == ClientMessages.STOCK:
-            # TODO: get items in stock from the DB and return them in a list
-            items = []
+            items = DB_Items.get_all_items()
             self.__send_msg(ServerMessages.STOCK, items)
 
     
