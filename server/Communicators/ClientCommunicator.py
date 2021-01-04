@@ -21,26 +21,26 @@ class ClientCommunicator:
         self.robot_comm = robot_comm
     
     # This function has to be called after every message received from the client!
-    def recv_msg(self, msg):
+    async def recv_msg(self, msg):
         self.msg = msg
         self.parser = ClientMessageParser(msg)
         # no need to handle ACK
         if self.parser.type != ClientMessages.ACK:
-            self.__handle_msg()
+            await self.__handle_msg()
     
-    def __handle_msg(self):
+    async def __handle_msg(self):
         if self.parser.type == ClientMessages.CONNECT:
-            self.__send_msg(ServerMessages.ACK)
+            await self.__send_msg(ServerMessages.ACK)
         
         elif self.parser.type == ClientMessages.ORDER:
             not_available_items = DB_Items.get_not_available_items(self.parser.items)
             # some items are not available
             if not_available_items:
-                self.__send_msg(ServerMessages.ITEM_NOT_AVAILABLE, not_available_items)
-                self.__recv()       # receive the ACK
+                await self.__send_msg(ServerMessages.ITEM_NOT_AVAILABLE, not_available_items)
+                await self.__recv()       # receive the ACK
             # all items are available
             else:
-                self.__send_msg(ServerMessages.ACK)
+                await self.__send_msg(ServerMessages.ACK)
             
             # any way, we proceed the available items
             available_items = DB_Items.get_available_items(self.parser.items)
@@ -51,14 +51,14 @@ class ClientCommunicator:
             for steps in items_steps:
                 self.robot_comm.handle_order(steps)
             # send DONE when the order is ready
-            self.__send_msg(ServerMessages.DONE)
+            await self.__send_msg(ServerMessages.DONE)
         
         elif self.parser.type == ClientMessages.STOCK:
             items = DB_Items.get_all_items()
-            self.__send_msg(ServerMessages.STOCK, items)
+            await self.__send_msg(ServerMessages.STOCK, items)
 
     
-    def __send_msg(self, msg_type, param=''):
+    async def __send_msg(self, msg_type, param=''):
         msg = None
         if msg_type == ServerMessages.ACK:
             msg = ServerMessageGenerator.client_ack_msg()
@@ -70,12 +70,13 @@ class ClientCommunicator:
             msg = ServerMessageGenerator.stock_msg(param)
 
         if msg != None:
-            self.__send(msg_type)
+            await self.__send(msg)
     
 
     async def __send(self, msg):
         # TODO: The msg is of type JSON, so it should be sent in a binary format. 
         #       If the client has problems with that, send as string and the client will parse it to JSON by itself
+        print(msg)
         await self.websocket.send(msg)
     
     async def __recv(self):

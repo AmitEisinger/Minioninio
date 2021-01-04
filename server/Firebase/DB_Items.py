@@ -15,7 +15,7 @@ class DB_Items:
             doc = fc.read(COL, item[DocumentFields.ID])
             if not doc:
                 not_available_items.append(item)
-            amounts_diff = item[ClientMessageFields.AMOUNT] - doc[DocumentFields.AMOUNT]    # desirable - available
+                amounts_diff = item[ClientMessageFields.AMOUNT] - doc[DocumentFields.AMOUNT]    # desirable - available
             elif amounts_diff > 0:
                 not_available_items[ClientMessageFields.AMOUNT] = amounts_diff
         return not_available_items

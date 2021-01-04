@@ -17,5 +17,6 @@ class WebSocketServer:
     async def __ws_handler(self, websocket, path):
         client_communicator = ClientCommunicator(websocket, self.robot_comm)
         while True:
+            print('begin loop')
             msg = await websocket.recv()
-            client_communicator.recv_msg(msg)
+            await client_communicator.recv_msg(msg)
