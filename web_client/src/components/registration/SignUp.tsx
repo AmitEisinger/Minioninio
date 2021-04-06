@@ -56,6 +56,7 @@ export class SignUp extends React.Component<any, SignUpState>{
     render() { 
       return (
       <div className='wrapper'>
+         <div><img src="./logo.png" height="100" width="200"></img></div>
          <div className='form-wrapper'>
             <h2>Sign Up</h2>
             <form onSubmit={this.handleSignup}>

@@ -62,6 +62,7 @@ export class Login extends React.Component<any, LoginState>{
   {  
     return (
       <div className='wrapper'>
+        <div><img src="./logo.png" height="100" width="200"></img></div>
         <div className='form-wrapper'>
           <h2>Login</h2>
           <form onSubmit={this.handleLogin}>
