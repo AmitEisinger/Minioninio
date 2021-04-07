@@ -27,3 +27,6 @@ class RobotMessageParser():
     def set_location(self, row, col):
         self.curr_row = row
         self.curr_col = col
+    
+    def set_face_direction(self, dir):
+        self.curr_face_direction = dir

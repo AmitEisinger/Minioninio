@@ -26,11 +26,15 @@ class ServerMessageGenerator:
             }
         )
     
-    def done_msg():
+    def done_msg(row, col):
         return Utils.dict_to_json(
             {
                 ClientMessageFields.SOURCE : S,
-                ClientMessageFields.TYPE : ServerMessages.DONE.value
+                ClientMessageFields.TYPE : ServerMessages.DONE.value,
+                ClientMessageFields.LOCATION : {
+                    ClientMessageFields.ROW : row,
+                    ClientMessageFields.COL : col
+                }
             }
         )
 

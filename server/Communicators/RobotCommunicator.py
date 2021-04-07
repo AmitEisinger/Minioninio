@@ -1,6 +1,9 @@
 from MessageHandlers.RobotMessageParser import *
 from MessageHandlers.ServerMessageGenerator import ServerMessageGenerator
 from Servers.FTP_Server import FTP_Server
+from Definitions.Directions import step_to_direction
+from Definitions.Grid import Grid
+import time
 
 
 """
@@ -28,14 +31,24 @@ class RobotCommunicator:
             self.__send_msg(ServerMessages.ACK)
     
     def handle_order(self, steps):
-        for step in steps:
+        face_dir = self.parser.curr_face_direction
+        for i in range(len(steps)-1):
+            step, face_dir = step_to_direction(steps[i], steps[i+1], face_dir)
             self.__send_msg(ServerMessages.MOVE, step)
             self.__recv()    # receive the ACK
             FTP_Server(self.parser).start()     # TODO: maybe it would be better to start the FTP connection once earlier - check it
-            # TODO: the current robot's location is now updated in self.parse - validate it
+            self.__update_position(steps[i][0], steps[i][1], face_dir)
             self.__send_msg(ServerMessages.ACK)
+            # wait when reaching the dispenser
+            if Grid.is_dispenser(steps[i+1]):
+                time.sleep(10)
         self.__send_msg(ServerMessages.DROP)
         self.__recv()        # receive the ACK
+    
+    
+    def __update_position(self, row, col, face_dir):
+        self.parser.set_location(row, col)
+        self.parser.set_face_direction(face_dir)
     
 
     def __send_msg(self, msg_type, param=''):
