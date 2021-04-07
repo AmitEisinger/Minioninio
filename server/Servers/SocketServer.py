@@ -7,7 +7,7 @@ from Servers.Details import *
 """
 class fields:
     robot_comm - robot communicator (there is a single robot, so a single communicator too)
-    conn - the socket that robot has been connected with
+    conn - the socket that the robot has been connected with
 """
 class SocketServer:
     def __init__(self):

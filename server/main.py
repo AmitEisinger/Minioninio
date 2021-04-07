@@ -7,5 +7,6 @@ if __name__ == "__main__":
     socket_server.connect()
     # at this point, the robot is connected
     websocket_server = WebSocketServer(socket_server.robot_comm)
+    # TODO: maybe we need to parallelize the following two commands
     websocket_server.serve()
     socket_server.serve()

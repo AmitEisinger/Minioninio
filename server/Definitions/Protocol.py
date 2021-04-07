@@ -40,3 +40,6 @@ class ClientMessageFields:
     ITEMS = 'items'
     ID = 'id'
     AMOUNT = 'amount'
+    LOCATION = 'location'
+    ROW = 'row'
+    COL = 'col'

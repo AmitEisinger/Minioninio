@@ -15,17 +15,20 @@ class DB_Items:
             doc = fc.read(COL, item[DocumentFields.ID])
             if not doc:
                 not_available_items.append(item)
+                continue
             amounts_diff = item[ClientMessageFields.AMOUNT] - doc[DocumentFields.AMOUNT]    # desirable - available
-            elif amounts_diff > 0:
-                not_available_items[ClientMessageFields.AMOUNT] = amounts_diff
+            if amounts_diff > 0:
+                item[ClientMessageFields.AMOUNT] = amounts_diff
+                not_available_items.append(item)
         return not_available_items
 
     def get_available_items(items):
-        available_items = items
-        for i,item in enumerate(available_items):
+        available_items = []
+        for item in available_items:
             doc = fc.read(COL, item[DocumentFields.ID])
-            if not doc:
-                del available_items[i]
-            elif doc[DocumentFields.AMOUNT] < item[ClientMessageFields.AMOUNT]:
-                available_items[ClientMessageFields.AMOUNT] = doc[DocumentFields.AMOUNT]
+            if doc:
+                amounts_diff = item[ClientMessageFields.AMOUNT] - doc[DocumentFields.AMOUNT]    # desirable - available
+                if amounts_diff > 0:
+                    item[ClientMessageFields.AMOUNT] = doc[DocumentFields.AMOUNT]
+                available_items.append(item)
         return available_items

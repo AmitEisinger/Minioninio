@@ -4,6 +4,7 @@ import Communicators.RobotCommunicator
 from Definitions.Directions import *
 from MessageHandlers.ServerMessageGenerator import *
 from Firebase.DB_Items import DB_Items
+from Definitions.Grid import *
 
 
 """
@@ -14,11 +15,13 @@ class fields:
     robot_comm - robot communicator (there is a single robot, so a single communicator too)
     msg - last received message (as string)
     parser - client parser that parses the current message
+    dst_row, dst_col - the location from which the client should pick the orders
 """
 class ClientCommunicator:
     def __init__(self, websocket, robot_comm):
         self.websocket = websocket
         self.robot_comm = robot_comm
+        self.dst_row, self.dst_col = Grid.get_empty_dst()
     
     # This function has to be called after every message received from the client!
     def recv_msg(self, msg):
@@ -42,40 +45,38 @@ class ClientCommunicator:
             else:
                 self.__send_msg(ServerMessages.ACK)
             
-            # any way, we proceed the available items
+            # any way, we provide the available items
             available_items = DB_Items.get_available_items(self.parser.items)
-            # TODO: calculate the route for the robot and send it as a list of lists of Directions 
-            # (inner list for every item in the order).
-            # put it in items_steps
-            items_steps = []
-            for steps in items_steps:
+            # calculate the route for the robot
+            for item in available_items:
+                # steps: current -> dispenser -> destination
+                steps = Grid.calculate_route(self.robot_comm.parser.curr_row, self.robot_comm.parser.curr_col, DISPENSER_ROW, DISPENSER_COL)
+                        + Grid.calculate_route(DISPENSER_ROW, DISPENSER_COL, self.dst_row, self.dst_col)
                 self.robot_comm.handle_order(steps)
             # send DONE when the order is ready
-            self.__send_msg(ServerMessages.DONE)
+            self.__send_msg(ServerMessages.DONE, self.dst_row, self.dst_col)
         
         elif self.parser.type == ClientMessages.STOCK:
             items = DB_Items.get_all_items()
             self.__send_msg(ServerMessages.STOCK, items)
 
     
-    def __send_msg(self, msg_type, param=''):
+    def __send_msg(self, msg_type, *args):
         msg = None
         if msg_type == ServerMessages.ACK:
             msg = ServerMessageGenerator.client_ack_msg()
         elif msg_type == ServerMessages.DONE:
-            msg = ServerMessageGenerator.done_msg()
+            msg = ServerMessageGenerator.done_msg(args[0], args[1])
         elif msg_type == ServerMessages.ITEM_NOT_AVAILABLE:
-            msg = ServerMessageGenerator.item_not_available_msg(param)
+            msg = ServerMessageGenerator.item_not_available_msg(args[0])
         elif msg_type == ServerMessages.STOCK:
-            msg = ServerMessageGenerator.stock_msg(param)
+            msg = ServerMessageGenerator.stock_msg(args[0])
 
         if msg != None:
             self.__send(msg_type)
     
 
     async def __send(self, msg):
-        # TODO: The msg is of type JSON, so it should be sent in a binary format. 
-        #       If the client has problems with that, send as string and the client will parse it to JSON by itself
         await self.websocket.send(msg)
     
     async def __recv(self):
