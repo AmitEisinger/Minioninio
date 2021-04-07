@@ -21,9 +21,12 @@ class Grid:
 
     # an empty destination is any empty cell on the borders
     def get_empty_dst():
-        borders = set(Grid.GRID[0] + Grid.GRID[-1] + [row[0] for row in Grid.GRID] + [row[-1] for row in Grid.GRID])
-        borders = [cell for cell in borders if cell == CellTypes.EMPTY]
-        return random.choice(borders)
+        rows_amount = len(Grid.GRID)
+        cols_amount = len(Grid.GRID[0])
+        is_const_row = random.choice([True, False])
+        row = random.choice([0, rows_amount - 1]) if is_const_row else random.randint(0, rows_amount - 1)
+        col = random.randint(0, cols_amount - 1)  if is_const_row else random.choice([0, cols_amount - 1])
+        return row, col
     
 
     def is_dispenser(location):

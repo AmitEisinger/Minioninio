@@ -24,26 +24,26 @@ class ClientCommunicator:
         self.dst_row, self.dst_col = Grid.get_empty_dst()
     
     # This function has to be called after every message received from the client!
-    def recv_msg(self, msg):
+    async def recv_msg(self, msg):
         self.msg = msg
         self.parser = ClientMessageParser(msg)
         # no need to handle ACK
         if self.parser.type != ClientMessages.ACK:
-            self.__handle_msg()
+            await self.__handle_msg()
     
-    def __handle_msg(self):
+    async def __handle_msg(self):
         if self.parser.type == ClientMessages.CONNECT:
-            self.__send_msg(ServerMessages.ACK)
+            await self.__send_msg(ServerMessages.ACK)
         
         elif self.parser.type == ClientMessages.ORDER:
             not_available_items = DB_Items.get_not_available_items(self.parser.items)
             # some items are not available
             if not_available_items:
-                self.__send_msg(ServerMessages.ITEM_NOT_AVAILABLE, not_available_items)
-                self.__recv()       # receive the ACK
+                await self.__send_msg(ServerMessages.ITEM_NOT_AVAILABLE, not_available_items)
+                await self.__recv()       # receive the ACK
             # all items are available
             else:
-                self.__send_msg(ServerMessages.ACK)
+                await self.__send_msg(ServerMessages.ACK)
             
             # any way, we provide the available items
             available_items = DB_Items.get_available_items(self.parser.items)
@@ -54,14 +54,14 @@ class ClientCommunicator:
                         + Grid.calculate_route(DISPENSER_ROW, DISPENSER_COL, self.dst_row, self.dst_col)
                 self.robot_comm.handle_order(steps)
             # send DONE when the order is ready
-            self.__send_msg(ServerMessages.DONE, self.dst_row, self.dst_col)
+            await self.__send_msg(ServerMessages.DONE, self.dst_row, self.dst_col)
         
         elif self.parser.type == ClientMessages.STOCK:
             items = DB_Items.get_all_items()
-            self.__send_msg(ServerMessages.STOCK, items)
+            await self.__send_msg(ServerMessages.STOCK, items)
 
     
-    def __send_msg(self, msg_type, *args):
+    async def __send_msg(self, msg_type, *args):
         msg = None
         if msg_type == ServerMessages.ACK:
             msg = ServerMessageGenerator.client_ack_msg()
@@ -73,7 +73,7 @@ class ClientCommunicator:
             msg = ServerMessageGenerator.stock_msg(args[0])
 
         if msg != None:
-            self.__send(msg_type)
+            await self.__send(msg_type)
     
 
     async def __send(self, msg):

@@ -18,4 +18,4 @@ class WebSocketServer:
         client_communicator = ClientCommunicator(websocket, self.robot_comm)
         while True:
             msg = await websocket.recv()
-            client_communicator.recv_msg(msg)
+            await client_communicator.recv_msg(msg)
