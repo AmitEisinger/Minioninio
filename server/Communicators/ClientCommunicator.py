@@ -50,8 +50,7 @@ class ClientCommunicator:
             # calculate the route for the robot
             for item in available_items:
                 # steps: current -> dispenser -> destination
-                steps = Grid.calculate_route(self.robot_comm.parser.curr_row, self.robot_comm.parser.curr_col, DISPENSER_ROW, DISPENSER_COL)
-                        + Grid.calculate_route(DISPENSER_ROW, DISPENSER_COL, self.dst_row, self.dst_col)
+                steps = Grid.calculate_route(self.robot_comm.parser.curr_row, self.robot_comm.parser.curr_col, DISPENSER_ROW, DISPENSER_COL) + Grid.calculate_route(DISPENSER_ROW, DISPENSER_COL, self.dst_row, self.dst_col)
                 self.robot_comm.handle_order(steps)
             # send DONE when the order is ready
             await self.__send_msg(ServerMessages.DONE, self.dst_row, self.dst_col)
@@ -73,7 +72,7 @@ class ClientCommunicator:
             msg = ServerMessageGenerator.stock_msg(args[0])
 
         if msg != None:
-            await self.__send(msg_type)
+            await self.__send(msg)
     
 
     async def __send(self, msg):

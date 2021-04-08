@@ -67,7 +67,7 @@ var W3CWebSocket = require('websocket').w3cwebsocket;
       else if(jsonData.type === 3)
       {
         console.log("Order completed")
-        alert("Order Completed! It's waiting for you to pick it up")
+        alert("Order Completed! It's waiting for you to pick it up at: (" + jsonData.location.row + ", " + jsonData.location.col + ")")
         client.send(JSON.stringify(
           {src: 'C', 
           type: 2}
