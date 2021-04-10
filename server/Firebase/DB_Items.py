@@ -32,3 +32,15 @@ class DB_Items:
                     item[ClientMessageFields.AMOUNT] = doc[DocumentFields.AMOUNT]
                 available_items.append(item)
         return available_items
+    
+    def update_items_amount(items):
+        for item in items:
+            doc = fc.read(COL, item[DocumentFields.ID])
+            if not doc:
+                continue
+            new_amount = doc[DocumentFields.AMOUNT] - item[ClientMessageFields.AMOUNT]
+            if new_amount > 0:
+                to_update = {DocumentFields.AMOUNT : item[ClientMessageFields.AMOUNT]}
+                fc.update(COL, item[DocumentFields.ID], new_amount)
+            else:
+                fc.deleteDocument(COL, item[DocumentFields.ID])

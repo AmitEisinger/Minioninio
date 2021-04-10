@@ -52,6 +52,8 @@ class ClientCommunicator:
                 # steps: current -> dispenser -> destination
                 steps = Grid.calculate_route(self.robot_comm.parser.curr_row, self.robot_comm.parser.curr_col, DISPENSER_ROW, DISPENSER_COL) + Grid.calculate_route(DISPENSER_ROW, DISPENSER_COL, self.dst_row, self.dst_col)
                 self.robot_comm.handle_order(steps)
+            # update the stock in the DB
+            DB_Items.update_items_amount(available_items)
             # send DONE when the order is ready
             await self.__send_msg(ServerMessages.DONE, self.dst_row, self.dst_col)
         
