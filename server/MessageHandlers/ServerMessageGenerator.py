@@ -7,19 +7,19 @@ S = Components.SERVER.value
 
 class ServerMessageGenerator:
     def robot_ack_msg():
-        return S + Utils.zero_padding(ServerMessages.ACK.value, 2)
+        return S + Utils.zero_padding(ServerMessages.ACK.value, 2) + '\n'
     
     # param dir of type Directions
     def move_msg(dir):
         msg_type = Utils.zero_padding(ServerMessages.MOVE.value, 2)
-        return S + msg_type + dir.value
+        return S + msg_type + dir.value + '\n'
     
     def rotate_msg(dir):
         msg_type = Utils.zero_padding(ServerMessages.ROTATE.value, 2)
-        return S + msg_type + dir.value
+        return S + msg_type + dir.value + '\n'
     
     def drop_msg():
-        return S + Utils.zero_padding(ServerMessages.DROP.value, 2)
+        return S + Utils.zero_padding(ServerMessages.DROP.value, 2) + '\n'
     
     
     def client_ack_msg():
