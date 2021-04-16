@@ -30,20 +30,32 @@ class RobotCommunicator:
         if self.parser.type != RobotMessages.ACK:
             self.__send_msg(ServerMessages.ACK)
     
+
     def handle_order(self, steps):
         face_dir = self.parser.curr_face_direction
         for i in range(len(steps)-1):
             step, face_dir = step_to_direction(steps[i], steps[i+1], face_dir)
             self.__send_msg(ServerMessages.MOVE, step)
             self.__recv()    # receive the ACK
-            FTP_Server(self.parser).start()     # TODO: maybe it would be better to start the FTP connection once earlier - check it
+
+            # receive the location
+            msg = self.__recv()
+            self.recv_msg(msg)
             self.__update_position(steps[i][0], steps[i][1], face_dir)
             self.__send_msg(ServerMessages.ACK)
             # wait when reaching the dispenser
             if Grid.is_dispenser(steps[i+1]):
-                time.sleep(10)
+                # TODO: send a message to the dispenser
+                time.sleep(20)
+        
+        # rotate such that the robot will drop to the right
+        rotate_dir, face_dir = get_rotation_direction(setps[-1], face_dir)
+        self.__send_msg(ServerMessages.ROTATE, rotate_dir)
+        self.__recv()       # receive the ACK
+        self.parser.set_face_direction(face_dir)
+        # drop
         self.__send_msg(ServerMessages.DROP)
-        self.__recv()        # receive the ACK
+        self.__recv()       # receive the ACK
     
     
     def __update_position(self, row, col, face_dir):

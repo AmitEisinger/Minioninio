@@ -14,9 +14,11 @@ class CellTypes(Enum):
 
 class Grid:
     GRID = [
-        [CellTypes.DISPENSER, CellTypes.EMPTY,    CellTypes.OBSTACLE],
-        [CellTypes.EMPTY,     CellTypes.EMPTY,    CellTypes.EMPTY],
-        [CellTypes.EMPTY,     CellTypes.OBSTACLE, CellTypes.EMPTY]
+        [CellTypes.DISPENSER, CellTypes.EMPTY,    CellTypes.EMPTY, CellTypes.EMPTY,    CellTypes.EMPTY],
+        [CellTypes.EMPTY,     CellTypes.OBSTACLE, CellTypes.EMPTY, CellTypes.EMPTY,    CellTypes.OBSTACLE],
+        [CellTypes.EMPTY,     CellTypes.EMPTY,    CellTypes.EMPTY, CellTypes.EMPTY,    CellTypes.EMPTY],
+        [CellTypes.OBSTACLE,  CellTypes.OBSTACLE, CellTypes.EMPTY, CellTypes.EMPTY,    CellTypes.EMPTY],
+        [CellTypes.EMPTY,     CellTypes.EMPTY,    CellTypes.EMPTY, CellTypes.OBSTACLE, CellTypes.EMPTY]
     ]
 
     # an empty destination is any empty cell on the borders

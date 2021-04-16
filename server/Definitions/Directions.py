@@ -1,5 +1,6 @@
 from enum import Enum
 import Utils
+import Definitions.Grid.GRID as GRID
 
 
 class Directions(Enum):
@@ -67,3 +68,56 @@ def step_to_direction(src, dst, face_dir):
             step = Directions.BACKWARD
         new_face_dir = Directions.LEFT
     return step, new_face_dir
+
+
+"""
+returns: rotate_dir - the direction in which the robot should rotate in order to drop the item right to the robot
+         new_face_dir - robot's face direction after rotation
+"""
+def get_rotation_direction(location, face_dir):
+    row, col = location
+    # should drop up while facing left
+    if row == 0:
+        if face_dir == Directions.UP:
+            rotate_dir = Directions.LEFT
+        elif face_dir == Directions.DOWN:
+            rotate_dir = Directions.RIGHT
+        elif face_dir == Directions.LEFT:
+            rotate_dir = Directions.FORWARD
+        elif face_dir == Directions.RIGHT:
+            rotate_dir = Directions.BACKWARD
+        new_face_dir = Directions.LEFT
+    # should drop down while facing right
+    if row == len(GRID) - 1:
+        if face_dir == Directions.UP:
+            rotate_dir = Directions.RIGHT
+        elif face_dir == Directions.DOWN:
+            rotate_dir = Directions.LEFT
+        elif face_dir == Directions.LEFT:
+            rotate_dir = Directions.BACKWARD
+        elif face_dir == Directions.RIGHT:
+            rotate_dir = Directions.FORWARD
+        new_face_dir = Directions.RIGHT
+    # should drop left while facing down
+    if col == 0:
+        if face_dir == Directions.UP:
+            rotate_dir = Directions.BACKWARD
+        elif face_dir == Directions.DOWN:
+            rotate_dir = Directions.FORWARD
+        elif face_dir == Directions.LEFT:
+            rotate_dir = Directions.LEFT
+        elif face_dir == Directions.RIGHT:
+            rotate_dir = Directions.RIGHT
+        new_face_dir = Directions.DOWN
+    # should drop right while facing up
+    if col == len(GRID[0]) - 1:
+        if face_dir == Directions.UP:
+            rotate_dir = Directions.FORWARD
+        elif face_dir == Directions.DOWN:
+            rotate_dir = Directions.BACKWARD
+        elif face_dir == Directions.LEFT:
+            rotate_dir = Directions.RIGHT
+        elif face_dir == Directions.RIGHT:
+            rotate_dir = Directions.LEFT
+        new_face_dir = Directions.UP
+    return rotate_dir, new_face_dir
