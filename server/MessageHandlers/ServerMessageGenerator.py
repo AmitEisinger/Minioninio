@@ -14,6 +14,10 @@ class ServerMessageGenerator:
         msg_type = Utils.zero_padding(ServerMessages.MOVE.value, 2)
         return S + msg_type + dir.value
     
+    def rotate_msg(dir):
+        msg_type = Utils.zero_padding(ServerMessages.ROTATE.value, 2)
+        return S + msg_type + dir.value
+    
     def drop_msg():
         return S + Utils.zero_padding(ServerMessages.DROP.value, 2)
     

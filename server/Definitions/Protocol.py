@@ -5,7 +5,7 @@ import Utils
 class RobotMessages(Enum):
     CONNECT = 0
     ACK = 1
-    # in any other case it is a file
+    LOCATION = 2
 
     def get_robot_message_type(msg_type):
         return Utils.get_enum_of_val(msg_type, RobotMessages)
@@ -18,6 +18,7 @@ class ServerMessages(Enum):
     DONE = 3
     ITEM_NOT_AVAILABLE = 4
     STOCK = 5
+    ROTATE = 6
     
     def get_server_message_type(msg_type):
         return Utils.get_enum_of_val(msg_type, ServerMessages)
