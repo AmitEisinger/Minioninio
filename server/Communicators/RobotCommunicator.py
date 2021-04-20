@@ -36,24 +36,23 @@ class RobotCommunicator:
         for i in range(len(steps)-1):
             step, face_dir = step_to_direction(steps[i], steps[i+1], face_dir)
             self.__send_msg(ServerMessages.MOVE, step)
-            self.__recv()    # receive the ACK
+            self.__recv()       # receive the ACK
 
             # receive the location
             msg = self.__recv()
             self.recv_msg(msg)
-            self.__update_position(steps[i][0], steps[i][1], face_dir)
-            self.__send_msg(ServerMessages.ACK)
+            self.__update_position(steps[i+1][0], steps[i+1][1], face_dir)
             # wait when reaching the dispenser
             if Grid.is_dispenser(steps[i+1]):
-                # TODO: send a message to the dispenser
-                time.sleep(20)
+                time.sleep(10)
         
         # rotate such that the robot will drop to the right
-        rotate_dir, face_dir = get_rotation_direction(setps[-1], face_dir)
+        rotate_dir, face_dir = get_rotation_direction(steps[-1], face_dir)
         self.__send_msg(ServerMessages.ROTATE, rotate_dir)
         self.__recv()       # receive the ACK
         self.parser.set_face_direction(face_dir)
         # drop
+        time.sleep(7)
         self.__send_msg(ServerMessages.DROP)
         self.__recv()       # receive the ACK
     
@@ -71,12 +70,15 @@ class RobotCommunicator:
             msg = ServerMessageGenerator.move_msg(param)
         elif msg_type == ServerMessages.DROP:
             msg = ServerMessageGenerator.drop_msg()
+        elif msg_type == ServerMessages.ROTATE:
+            msg = ServerMessageGenerator.rotate_msg(param)
         
         if msg != None:
-            self.__send(msg)
+            self.__send(Utils.string_to_bytes(msg))
 
 
     def __send(self, msg):
+        time.sleep(2)
         self.sock.send(msg)
     
     def __recv(self):
