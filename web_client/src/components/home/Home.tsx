@@ -30,7 +30,7 @@ class Item {
 var formItems: Array<Item> = []
 
 var W3CWebSocket = require('websocket').w3cwebsocket;
-  var client = new W3CWebSocket('ws://localhost:8200/');
+  var client = new W3CWebSocket('ws://192.168.43.36:8200/');
 
   console.log("Starting Client");
 
