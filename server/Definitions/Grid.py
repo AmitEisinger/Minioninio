@@ -1,6 +1,5 @@
 from enum import Enum
 import random
-import Definitions.Directions
 
 
 DISPENSER_ROW, DISPENSER_COL = 0, 0
@@ -23,11 +22,13 @@ class Grid:
 
     # an empty destination is any empty cell on the borders
     def get_empty_dst():
+        row, col = DISPENSER_ROW, DISPENSER_COL
         rows_amount = len(Grid.GRID)
         cols_amount = len(Grid.GRID[0])
-        is_const_row = random.choice([True, False])
-        row = random.choice([0, rows_amount - 1]) if is_const_row else random.randint(0, rows_amount - 1)
-        col = random.randint(0, cols_amount - 1)  if is_const_row else random.choice([0, cols_amount - 1])
+        while Grid.GRID[row][col] != CellTypes.EMPTY:
+            is_const_row = random.choice([True, False])
+            row = random.choice([0, rows_amount - 1]) if is_const_row else random.randint(0, rows_amount - 1)
+            col = random.randint(0, cols_amount - 1)  if is_const_row else random.choice([0, cols_amount - 1])
         return row, col
     
 
@@ -37,13 +38,13 @@ class Grid:
 
 
     def calculate_route(src_row, src_col, dst_row, dst_col):
-        routes = Grid.__get_possible_routes(src_row, src_col, dst_row, dst_col, [(src_row, src_col)], [])
+        routes = Grid.__get_possible_routes(src_row, src_col, dst_row, dst_col, [(src_row, src_col)], [])[1:]
         shortest_route = min(routes, key=lambda route: len(route)) if routes else []
         return shortest_route
 
 
     def __get_possible_routes(src_row, src_col, dst_row, dst_col, route, routes):
-        if Grid.__out_of_bounds(src_row, src_col) or Grid.GRID[src_row][src_col] == CellTypes.OBSTACLE or (route and (src_row, src_col) in route[:-1]):
+        if Grid.__out_of_bounds(src_row, src_col) or Grid.GRID[src_row][src_col] == CellTypes.OBSTACLE or (src_row, src_col) in route[:-1]:
             return routes
         if src_row == dst_row and src_col == dst_col:
             routes.append(route)

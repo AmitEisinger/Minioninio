@@ -24,7 +24,7 @@ class DB_Items:
 
     def get_available_items(items):
         available_items = []
-        for item in available_items:
+        for item in items:
             doc = fc.read(COL, item[DocumentFields.ID])
             if doc:
                 amounts_diff = item[ClientMessageFields.AMOUNT] - doc[DocumentFields.AMOUNT]    # desirable - available
@@ -41,6 +41,6 @@ class DB_Items:
             new_amount = doc[DocumentFields.AMOUNT] - item[ClientMessageFields.AMOUNT]
             if new_amount > 0:
                 to_update = {DocumentFields.AMOUNT : item[ClientMessageFields.AMOUNT]}
-                fc.update(COL, item[DocumentFields.ID], new_amount)
+                fc.update(COL, item[DocumentFields.ID], {DocumentFields.AMOUNT : new_amount})
             else:
                 fc.deleteDocument(COL, item[DocumentFields.ID])

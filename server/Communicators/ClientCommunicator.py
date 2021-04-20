@@ -22,6 +22,7 @@ class ClientCommunicator:
         self.websocket = websocket
         self.robot_comm = robot_comm
         self.dst_row, self.dst_col = Grid.get_empty_dst()
+        print('Destination: (', self.dst_row, self.dst_col, ')')
     
     # This function has to be called after every message received from the client!
     async def recv_msg(self, msg):
@@ -51,6 +52,7 @@ class ClientCommunicator:
             for item in available_items:
                 # steps: current -> dispenser -> destination
                 steps = Grid.calculate_route(self.robot_comm.parser.curr_row, self.robot_comm.parser.curr_col, DISPENSER_ROW, DISPENSER_COL) + Grid.calculate_route(DISPENSER_ROW, DISPENSER_COL, self.dst_row, self.dst_col)
+                print('Steps: ', steps)
                 self.robot_comm.handle_order(steps)
             # update the stock in the DB
             DB_Items.update_items_amount(available_items)

@@ -9,6 +9,15 @@ def get_enum_of_val(val, _enum):
 def zero_padding(num, len):
     return str(num).zfill(len)
 
+def remove_zero_padding(s):
+    non_zero_index = 0
+    for c in s:
+        if c == '0':
+            non_zero_index += 1
+        else:
+            break
+    return int(s[non_zero_index:]) if non_zero_index < len(s) else 0
+
 def bytes_to_string(b):
     return b.decode()
 

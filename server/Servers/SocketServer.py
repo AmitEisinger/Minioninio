@@ -26,6 +26,7 @@ class SocketServer:
     def serve(self):
         if self.is_connected():
             with self.conn:
+                msg = self.conn.recv(BUFFER_SIZE)
+                self.robot_comm.recv_msg(msg)
                 while True:
-                    msg = self.conn.recv(BUFFER_SIZE)
-                    self.robot_comm.recv_msg(msg)
+                    continue

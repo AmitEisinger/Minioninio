@@ -1,6 +1,6 @@
 from enum import Enum
 import Utils
-import Definitions.Grid.GRID as GRID
+from Definitions.Grid import Grid
 
 
 class Directions(Enum):
@@ -88,7 +88,7 @@ def get_rotation_direction(location, face_dir):
             rotate_dir = Directions.BACKWARD
         new_face_dir = Directions.LEFT
     # should drop down while facing right
-    if row == len(GRID) - 1:
+    elif row == len(Grid.GRID) - 1:
         if face_dir == Directions.UP:
             rotate_dir = Directions.RIGHT
         elif face_dir == Directions.DOWN:
@@ -99,7 +99,7 @@ def get_rotation_direction(location, face_dir):
             rotate_dir = Directions.FORWARD
         new_face_dir = Directions.RIGHT
     # should drop left while facing down
-    if col == 0:
+    elif col == 0:
         if face_dir == Directions.UP:
             rotate_dir = Directions.BACKWARD
         elif face_dir == Directions.DOWN:
@@ -110,7 +110,7 @@ def get_rotation_direction(location, face_dir):
             rotate_dir = Directions.RIGHT
         new_face_dir = Directions.DOWN
     # should drop right while facing up
-    if col == len(GRID[0]) - 1:
+    elif col == len(Grid.GRID[0]) - 1:
         if face_dir == Directions.UP:
             rotate_dir = Directions.FORWARD
         elif face_dir == Directions.DOWN:
