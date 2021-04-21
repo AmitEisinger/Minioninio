@@ -10,4 +10,4 @@ The project was done as part of the Technion IOT Project during the Winter semes
 ## Team Members:
 1. Guy Carmi
 2. Amit Eisinger
-3. Tali Narovlansky
+3. Tali Narovlyansky
